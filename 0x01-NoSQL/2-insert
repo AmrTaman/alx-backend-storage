@@ -1,0 +1,4 @@
+//we are creating a document and inserting into my_db database
+record = {name: "Holberton school"}
+db.school.insert(record)
+
