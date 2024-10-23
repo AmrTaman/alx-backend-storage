@@ -5,19 +5,20 @@ iam here
 
 
 def top_students(mongo_collection):
-    # Aggregate to calculate average score for each student
+    """
+    iam here
+    """
     pipeline = [
         {
             '$project': {
-                'name': 1,  # Include the student's name
-                'averageScore': { '$avg': '$scores' }  # Calculate average score
+                'name': 1,
+                'averageScore': {'$avg': '$scores'}
             }
         },
         {
             '$sort': {
-                'averageScore': -1  # Sort by average score in descending order
+                'averageScore': -1
             }
         }
     ]
-    
     return list(mongo_collection.aggregate(pipeline))
