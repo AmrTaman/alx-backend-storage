@@ -11,9 +11,11 @@ def top_students(mongo_collection):
     pipeline = [
         {
             '$project': {
+                '_id': 1,
                 'name': 1,
-                'averageScore': {'$avg': '$scores'}
-            }
+                'averageScore': {'$avg': '$topics.scores'}
+            },
+            'topics': 1
         },
         {
             '$sort': {
