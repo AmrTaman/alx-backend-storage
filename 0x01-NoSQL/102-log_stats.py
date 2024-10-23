@@ -29,7 +29,7 @@ if __name__ == "__main__":
              method_put, method_patch, method_delete, status_check)
     print(result)
 
-    p_counts = coll.aggregate([
+    ip_counts = coll.aggregate([
         {"$group": {"_id": "$ip", "count": {"$sum": 1}}},
         {"$sort": {"count": -1}},
         {"$limit": 10}
