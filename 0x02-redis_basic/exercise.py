@@ -1,11 +1,10 @@
 #!/usr/bin/env python3
-"""
-we are caching using redis
-"""
-import redis
+'''A module for using the Redis NoSQL data storage.
+'''
 import uuid
+import redis
 from functools import wraps
-from typing import Union, Callable, Optional
+from typing import Any, Callable, Union
 
 
 def count_calls(method: Callable) -> Callable:
@@ -38,6 +37,7 @@ def call_history(method: Callable) -> Callable:
         return output
     return invoker
 
+
 def replay(fn: Callable) -> None:
     '''Displays the call history of a Cache class' method.
     '''
@@ -64,47 +64,39 @@ def replay(fn: Callable) -> None:
 
 
 class Cache:
-    """
-    this class is a caching blueprint
-    """
-    def __init__(self):
-        """
-        this method is an initialization
-        """
+    '''Represents an object for storing data in a Redis data storage.
+    '''
+    def __init__(self) -> None:
+        '''Initializes a Cache instance.
+        '''
         self._redis = redis.Redis()
-        self._redis.flushdb()
+        self._redis.flushdb(True)
 
     @call_history
     @count_calls
     def store(self, data: Union[str, bytes, int, float]) -> str:
-        """
-        this is a storing function
-        """
-        key = str(uuid.uuid4())
-        self._redis.set(key, data)
-        return key
+        '''Stores a value in a Redis data storage and returns the key.
+        '''
+        data_key = str(uuid.uuid4())
+        self._redis.set(data_key, data)
+        return data_key
 
-    def get(self, key: bytes,
-            fn: Optional[Callable] = None) -> Optional[Union[
-                str, bytes, int, float]]:
-        """
-        we are getting from redis
-        """
-        value = self._redis.get(key)
-        if value is None:
-            return None
-        if fn:
-            return fn(value)
-        return value
+    def get(
+            self,
+            key: str,
+            fn: Callable = None,
+            ) -> Union[str, bytes, int, float]:
+        '''Retrieves a value from a Redis data storage.
+        '''
+        data = self._redis.get(key)
+        return fn(data) if fn is not None else data
 
-    def get_str(self, key: str) -> Optional[str]:
-        """
-        converting bytes into str directly
-        """
-        return self.get(key, fn=lambda x: x.decode('utf-8'))
+    def get_str(self, key: str) -> str:
+        '''Retrieves a string value from a Redis data storage.
+        '''
+        return self.get(key, lambda x: x.decode('utf-8'))
 
-    def get_int(self, key: str) -> Optional[int]:
-        """
-        converting bytes to int
-        """
-        return self.get(key, fn=int)
+    def get_int(self, key: str) -> int:
+        '''Retrieves an integer value from a Redis data storage.
+        '''
+        return self.get(key, lambda x: int(x))
