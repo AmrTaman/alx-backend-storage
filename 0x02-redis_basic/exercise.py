@@ -27,7 +27,8 @@ class Cache:
         return key
 
     def get(self, key: bytes,
-            fn: Optional[Callable]) -> Optional[Union[str, bytes, int, float]]:
+            fn: Optional[Callable] = None) -> Optional[Union[
+                str, bytes, int, float]]:
         """
         we are getting from redis
         """
